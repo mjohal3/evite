@@ -54,6 +54,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    touch-action: manipulation;
   }
 
   #image-view img {
@@ -94,28 +95,6 @@
     }
   }
 
-  /* Loading spinner */
-  #loader {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 5;
-  }
-
-  #loader .spinner {
-    width: 48px;
-    height: 48px;
-    border: 3px solid rgba(255, 255, 255, 0.2);
-    border-top-color: rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
 
   #mute-btn {
     position: fixed;
@@ -152,80 +131,49 @@
 
 <div id="video-view"></div>
 
-<div id="loader"><div class="spinner"></div></div>
-
 <button id="mute-btn" aria-label="Toggle sound">&#x1F507;</button>
 
 <script>
   var imageView = document.getElementById('image-view');
   var videoView = document.getElementById('video-view');
   var muteBtn = document.getElementById('mute-btn');
-  var loader = document.getElementById('loader');
   var video = null;
-  var videoReady = false;
-  var tapped = false;
+  var started = false;
 
-  // Prefetch the video as a blob so no <video> element exists yet
-  var videoBlob = null;
-  fetch('invite.mp4')
-    .then(function (r) { return r.blob(); })
-    .then(function (blob) {
-      videoBlob = blob;
-      videoReady = true;
-      if (tapped) startVideo();
-    })
-    .catch(function () {});
+  function startVideo(e) {
+    if (e) e.preventDefault();
+    if (started) return;
+    started = true;
 
-  function createVideo(src) {
+    imageView.style.display = 'none';
+    videoView.style.display = 'flex';
+    muteBtn.style.display = 'flex';
+
     video = document.createElement('video');
+    video.src = 'invite.mp4';
+    video.playsInline = true;
     video.setAttribute('playsinline', '');
     video.setAttribute('webkit-playsinline', '');
+    video.preload = 'auto';
     video.muted = true;
-    video.src = src;
+    video.autoplay = true;
+    video.controls = false;
+    video.loop = true;
     video.style.cssText = 'width:100%;height:100%;object-fit:contain;';
-    // Inherit desktop styles
     if (window.innerWidth > 768) {
       video.style.borderRadius = '4px';
       video.style.boxShadow = '0 8px 40px rgba(0,0,0,0.6)';
     }
     videoView.appendChild(video);
 
-    video.addEventListener('ended', function () {
-      video.currentTime = 0;
-      video.play();
-    });
-
-    return video;
-  }
-
-  function startVideo() {
-    loader.style.display = 'none';
-    videoView.style.display = 'flex';
-    muteBtn.style.display = 'flex';
-
-    var src = videoBlob ? URL.createObjectURL(videoBlob) : 'invite.mp4';
-    createVideo(src);
-
     video.play().then(function () {
-      video.muted = false;
-      muteBtn.innerHTML = '&#x1F50A;';
-    }).catch(function () {
-      video.muted = true;
       muteBtn.innerHTML = '&#x1F507;';
+    }).catch(function (err) {
+      console.log('play failed:', err);
     });
   }
 
-  imageView.addEventListener('click', function () {
-    if (tapped) return;
-    tapped = true;
-    imageView.style.display = 'none';
-
-    if (videoReady) {
-      startVideo();
-    } else {
-      loader.style.display = 'flex';
-    }
-  });
+  imageView.addEventListener('pointerup', startVideo);
 
   muteBtn.addEventListener('click', function (e) {
     e.stopPropagation();
