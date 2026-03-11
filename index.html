@@ -68,9 +68,6 @@
   .envelope-container {
     position: absolute;
     inset: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     perspective: 1400px;
     cursor: pointer;
     border: 1px solid rgba(184,149,106,0.3);
@@ -78,7 +75,7 @@
     overflow: hidden;
   }
 
-  /* ── Top section (text) ── */
+  /* ── Top flap with text ── */
   .flap-top {
     position: absolute;
     top: 0; left: 0; right: 0;
@@ -86,9 +83,10 @@
     z-index: 5;
     background: linear-gradient(180deg, #ede4d8 0%, #e6dace 50%, #e0d5c8 100%);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding-bottom: 4vh;
+    padding: 3vh 20px 6vh;
     transform-origin: top center;
     transition: transform 0.9s cubic-bezier(0.4, 0, 0.15, 1);
   }
@@ -97,22 +95,23 @@
     z-index: 0;
   }
 
-  /* ── Bottom section (flat, big logo) ── */
+  /* ── Bottom flap with logo ── */
   .flap-bottom {
     position: absolute;
     bottom: 0; left: 0; right: 0;
     height: 50%;
     z-index: 3;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding-bottom: 0;
     background: linear-gradient(180deg, #e8ddd0 0%, #ede4d8 40%, #f0e8dc 100%);
-    transition: opacity 0.8s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6vh 20px 3vh;
+    transform-origin: bottom center;
+    transition: transform 0.9s cubic-bezier(0.4, 0, 0.15, 1);
   }
   .envelope-container.opened .flap-bottom {
-    opacity: 0;
-    pointer-events: none;
+    transform: rotateX(180deg);
+    z-index: 0;
   }
 
   /* Lacy ribbon border */
@@ -161,42 +160,31 @@
   .lace-corner.lb { bottom: 2px; left: 2px; transform: scaleY(-1); }
   .lace-corner.rb { bottom: 2px; right: 2px; transform: scale(-1,-1); }
 
-  /* Subtle horizontal divider between top and bottom halves */
-  .envelope-divider {
-    position: absolute;
-    top: 50%; left: 10%; right: 10%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(184,149,106,0.25), transparent);
-    z-index: 10;
-    transition: opacity 0.5s ease;
-  }
-  .envelope-container.opened .envelope-divider { opacity: 0; }
-
-  /* ── Heading text on top flap ── */
+  /* ── Heading text ── */
   .invite-heading {
     font-weight: 700;
-    font-size: clamp(14px, 3.5vmin, 22px);
+    font-size: clamp(12px, 2.5vmin, 20px);
     color: #2e2520;
     text-align: center;
     letter-spacing: 2.5px;
     line-height: 2;
     text-transform: uppercase;
-    padding: 0 20px;
+    flex-shrink: 1;
   }
   .invite-heading .script-line {
     display: block;
     font-family: 'Great Vibes', cursive;
-    font-size: clamp(38px, 9vmin, 58px);
+    font-size: clamp(32px, 7vmin, 58px);
     color: #7a5e3e;
     margin: 4px 0;
     letter-spacing: 1px;
     text-transform: none;
     font-weight: 400;
+    white-space: nowrap;
   }
   .invite-heading .ceremony-line {
     display: block;
     letter-spacing: 5px;
-    margin-bottom: 3vh;
   }
 
   /* ── Logo on bottom section ── */
@@ -204,9 +192,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 10;
   }
   .logo-wrap img {
-    width: clamp(180px, 42vmin, 300px);
+    width: clamp(130px, 22vh, 280px);
     height: auto;
     opacity: 0.95;
     filter: drop-shadow(0 2px 6px rgba(0,0,0,0.1));
@@ -215,11 +204,11 @@
   /* ── Wax Seal ── */
   .seal {
     position: absolute;
-    top: 46%; left: 50%;
+    top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     z-index: 20;
-    width: clamp(130px, 35vmin, 210px);
-    height: clamp(130px, 35vmin, 210px);
+    width: clamp(100px, 18vh, 170px);
+    height: clamp(100px, 18vh, 170px);
     transition: transform 0.3s ease, opacity 0.5s ease;
   }
   .seal:hover { transform: translate(-50%, -50%) scale(1.06); }
@@ -380,9 +369,7 @@
     <div class="lace-corner lb"><svg viewBox="0 0 30 30" fill="none"><path d="M2 28 C2 14 14 2 28 2" stroke="#b8956a" stroke-width="1.2" fill="none" opacity="0.5"/><circle cx="4" cy="4" r="2.5" fill="#b8956a" opacity="0.35"/><path d="M2 20 C2 10 10 2 20 2" stroke="#b8956a" stroke-width="0.6" fill="none" opacity="0.3"/></svg></div>
     <div class="lace-corner rb"><svg viewBox="0 0 30 30" fill="none"><path d="M2 28 C2 14 14 2 28 2" stroke="#b8956a" stroke-width="1.2" fill="none" opacity="0.5"/><circle cx="4" cy="4" r="2.5" fill="#b8956a" opacity="0.35"/><path d="M2 20 C2 10 10 2 20 2" stroke="#b8956a" stroke-width="0.6" fill="none" opacity="0.3"/></svg></div>
 
-    <div class="envelope-divider"></div>
-
-    <!-- Top section with invite text -->
+    <!-- Top flap with text -->
     <div class="flap-top">
       <div class="invite-heading">
         You are cordially invited to the
@@ -391,7 +378,7 @@
       </div>
     </div>
 
-    <!-- Bottom section with big AJ logo -->
+    <!-- Bottom flap with logo -->
     <div class="flap-bottom">
       <div class="logo-wrap">
         <img src="ajlogo.png" alt="A & J">
