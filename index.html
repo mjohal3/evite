@@ -21,174 +21,521 @@
 <meta name="twitter:description" content="A & J — Roka & Chunni Ceremony | May 16, 2026 | Tap to view">
 <meta name="twitter:image" content="https://meharj.com/evite/invite.jpg">
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
+
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   html, body {
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     overflow: hidden;
-    background: #000;
-    font-family: sans-serif;
+    background: #f9f4ee;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Blurred backdrop — fills entire screen with the invite image */
-  #backdrop {
-    position: fixed;
-    top: -5%;
-    left: -5%;
-    width: 110%;
-    height: 110%;
-    background: url('invite.jpg') center/cover no-repeat;
-    filter: blur(30px) brightness(0.4);
-    z-index: 0;
+  /* ── Envelope Screen ── */
+  #envelope-screen {
+    position: fixed; inset: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #f9f4ee;
+    transition: opacity 0.6s ease;
+  }
+  #envelope-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
   }
 
-  #image-view {
+  /* SVG mandala decorations in corners */
+  .corner-decor {
+    position: absolute;
+    width: 220px; height: 220px;
+    opacity: 0.07;
+    pointer-events: none;
+  }
+  .corner-decor.tl { top: -30px; left: -30px; }
+  .corner-decor.br { bottom: -30px; right: -30px; transform: rotate(180deg); }
+
+  /* Envelope wrapper — fills most of the screen on mobile */
+  .envelope-wrapper {
     position: relative;
-    z-index: 1;
-    width: 100%;
-    height: 100%;
+    width: min(340px, 88vw);
+    height: min(540px, 80vh);
+    perspective: 1200px;
+    cursor: pointer;
+  }
+
+  /* Envelope body (background card) */
+  .envelope-body {
+    position: absolute; inset: 0;
+    background: linear-gradient(170deg, #f3ebe0 0%, #ece2d4 100%);
+    border-radius: 16px;
+    box-shadow:
+      0 12px 50px rgba(140,110,70,0.12),
+      0 2px 10px rgba(0,0,0,0.05);
+    overflow: hidden;
+  }
+  /* Inner gold border */
+  .envelope-body::before {
+    content: '';
+    position: absolute; inset: 8px;
+    border: 1px solid rgba(200,168,120,0.22);
+    border-radius: 10px;
+    pointer-events: none;
+  }
+
+  /* ── Flaps ── */
+  .flap-top {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 52%;
+    background: linear-gradient(178deg, #f0e7da 0%, #e9dece 100%);
+    border-radius: 16px 16px 0 0;
+    transform-origin: top center;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.15, 1);
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 28px 44px;
+  }
+  /* Subtle shadow along the fold */
+  .flap-top::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 8px; right: 8px;
+    height: 1px;
+    background: rgba(160,130,90,0.15);
+  }
+  .envelope-wrapper.opened .flap-top {
+    transform: rotateX(-180deg);
+  }
+
+  .flap-bottom {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 52%;
+    background: linear-gradient(2deg, #f0e7da 0%, #e9dece 100%);
+    border-radius: 0 0 16px 16px;
+    transform-origin: bottom center;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.15, 1);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 44px 28px 32px;
+  }
+  .flap-bottom::after {
+    content: '';
+    position: absolute;
+    top: -1px; left: 8px; right: 8px;
+    height: 1px;
+    background: rgba(160,130,90,0.12);
+  }
+  .envelope-wrapper.opened .flap-bottom {
+    transform: rotateX(180deg);
+  }
+
+  /* ── Heading on top flap ── */
+  .invite-heading {
+    font-weight: 400;
+    font-size: 16px;
+    color: #6b5a48;
+    text-align: center;
+    letter-spacing: 0.6px;
+    line-height: 1.8;
+  }
+  .invite-heading .script-line {
+    display: block;
+    font-family: 'Great Vibes', cursive;
+    font-size: 32px;
+    color: #b8956a;
+    margin: 4px 0 2px;
+    letter-spacing: 0;
+  }
+
+  /* Thin gold divider */
+  .divider {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #c8a878, transparent);
+    margin: 10px auto 0;
+  }
+
+  /* ── Logo on bottom flap ── */
+  .logo-wrap {
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    touch-action: manipulation;
+  }
+  .logo-wrap img {
+    width: 110px;
+    height: auto;
+    opacity: 0.9;
   }
 
-  #image-view img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    border-radius: 4px;
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+  /* ── Wax Seal ── */
+  .seal {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    width: 82px; height: 82px;
+    transition: transform 0.3s ease, opacity 0.5s ease;
+  }
+  .seal:hover { transform: translate(-50%, -50%) scale(1.06); }
+  .seal:active { transform: translate(-50%, -50%) scale(0.96); }
+  .envelope-wrapper.opened .seal {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(0.4);
   }
 
-  @media (max-width: 768px) {
-    #image-view img {
-      border-radius: 0;
-      box-shadow: none;
-    }
+  .seal-circle {
+    width: 82px; height: 82px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 35%, #b03545 0%, #8a2232 55%, #6e1a28 100%);
+    box-shadow:
+      0 5px 18px rgba(110,26,40,0.45),
+      inset 0 2px 5px rgba(255,255,255,0.12),
+      inset 0 -3px 6px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
   }
-
-  #video-view {
-    display: none;
+  /* Inner ring */
+  .seal-circle::before {
+    content: '';
+    position: absolute;
+    inset: 7px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.18);
+  }
+  .seal-circle::after {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border-radius: 50%;
+    border: 0.5px solid rgba(255,255,255,0.1);
+  }
+  .seal-text {
+    font-family: 'Great Vibes', cursive;
+    font-size: 15px;
+    color: #f5dfc5;
+    text-align: center;
+    line-height: 1.2;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.35);
     position: relative;
     z-index: 1;
-    width: 100%;
-    height: 100%;
   }
 
-  #video-view video {
-    width: 100%;
-    height: 100%;
+  /* Wax drip blobs */
+  .seal-circle .drip {
+    position: absolute;
+    border-radius: 50% 50% 50% 50%;
+  }
+  .drip-1 { width: 14px; height: 11px; top: -4px; left: 16px;
+    background: radial-gradient(ellipse at 50% 40%, #b03545, #8a2232); }
+  .drip-2 { width: 11px; height: 10px; bottom: -3px; right: 12px;
+    background: radial-gradient(ellipse at 50% 40%, #a83040, #7a1e2a); }
+  .drip-3 { width: 9px; height: 10px; top: 8px; right: -3px;
+    background: radial-gradient(ellipse at 50% 40%, #a83040, #7a1e2a); }
+  .drip-4 { width: 12px; height: 10px; bottom: 6px; left: -4px;
+    background: radial-gradient(ellipse at 50% 40%, #b03545, #8a2232); }
+  .drip-5 { width: 10px; height: 9px; top: -3px; right: 20px;
+    background: radial-gradient(ellipse at 50% 40%, #a83040, #8a2232); }
+
+  /* Seal pulse */
+  @keyframes sealPulse {
+    0%, 100% { box-shadow: 0 5px 18px rgba(110,26,40,0.45), 0 0 0 0 rgba(176,53,69,0.25); }
+    50% { box-shadow: 0 5px 18px rgba(110,26,40,0.45), 0 0 0 12px rgba(176,53,69,0); }
+  }
+  .seal-circle { animation: sealPulse 2.8s ease-in-out infinite; }
+  .envelope-wrapper.opened .seal-circle { animation: none; }
+
+  /* ── Video Screen ── */
+  #video-screen {
+    position: fixed; inset: 0;
+    z-index: 50;
+    background: linear-gradient(135deg, #f5e6e0 0%, #f0ddd2 25%, #ecdac8 50%, #e8d0be 75%, #f2e0d6 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    overflow: hidden;
+  }
+  #video-screen.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Blurred backdrop that mirrors the video */
+  #video-backdrop {
+    position: absolute; inset: -20px;
+    z-index: 0;
+    filter: blur(40px) brightness(0.85) saturate(1.3);
+    transform: scale(1.15);
+    object-fit: cover;
+    width: calc(100% + 40px);
+    height: calc(100% + 40px);
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  #video-screen > video:not(#video-backdrop) {
+    position: relative;
+    z-index: 1;
+    width: 100%; height: 100%;
     object-fit: contain;
-    border-radius: 4px;
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
   }
-
-  @media (max-width: 768px) {
-    #video-view video {
-      border-radius: 0;
-      box-shadow: none;
-    }
-  }
-
 
   #mute-btn {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 44px;
-    height: 44px;
+    bottom: 24px; right: 24px;
+    width: 48px; height: 48px;
     border-radius: 50%;
     border: none;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     color: #fff;
     font-size: 20px;
     cursor: pointer;
-    z-index: 10;
+    z-index: 60;
     display: none;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    transition: background 0.2s;
+  }
+  #mute-btn:hover { background: rgba(255,255,255,0.22); }
+  #mute-btn:active { background: rgba(255,255,255,0.32); }
+
+  /* Spinner */
+  .spinner {
+    position: absolute;
+    width: 36px; height: 36px;
+    border: 3px solid rgba(255,255,255,0.12);
+    border-top-color: rgba(255,255,255,0.75);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Responsive ── */
+  @media (max-width: 420px) {
+    .envelope-wrapper {
+      width: 90vw;
+      height: 78vh;
+    }
+    .invite-heading { font-size: 15px; }
+    .invite-heading .script-line { font-size: 28px; }
+    .logo-wrap img { width: 95px; }
+    .corner-decor { width: 160px; height: 160px; }
   }
 
-  #mute-btn:active {
-    background: rgba(0, 0, 0, 0.7);
+  @media (min-width: 769px) {
+    .envelope-wrapper {
+      width: 380px;
+      height: 560px;
+    }
+    .invite-heading { font-size: 18px; }
+    .invite-heading .script-line { font-size: 36px; }
+    .logo-wrap img { width: 130px; }
+    .corner-decor { width: 280px; height: 280px; }
   }
 </style>
 </head>
 <body>
 
-<div id="backdrop"></div>
+<!-- ── Envelope Screen ── -->
+<div id="envelope-screen">
+  <!-- Decorative mandala corners (inline SVG) -->
+  <svg class="corner-decor tl" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="100" r="95" stroke="#b8956a" stroke-width="0.5"/>
+    <circle cx="100" cy="100" r="80" stroke="#b8956a" stroke-width="0.5"/>
+    <circle cx="100" cy="100" r="65" stroke="#b8956a" stroke-width="0.3"/>
+    <path d="M100 5 L105 95 L100 100 L95 95 Z" fill="#b8956a" opacity="0.4"/>
+    <path d="M195 100 L105 105 L100 100 L105 95 Z" fill="#b8956a" opacity="0.4"/>
+    <path d="M100 195 L95 105 L100 100 L105 105 Z" fill="#b8956a" opacity="0.4"/>
+    <path d="M5 100 L95 95 L100 100 L95 105 Z" fill="#b8956a" opacity="0.4"/>
+    <path d="M30 30 L97 97 L100 100 L97 103 Z" fill="#b8956a" opacity="0.3" transform="rotate(0 100 100)"/>
+    <path d="M170 30 L103 97 L100 100 L103 103 Z" fill="#b8956a" opacity="0.3"/>
+    <path d="M170 170 L103 103 L100 100 L103 97 Z" fill="#b8956a" opacity="0.3"/>
+    <path d="M30 170 L97 103 L100 100 L97 97 Z" fill="#b8956a" opacity="0.3"/>
+    <circle cx="100" cy="100" r="50" stroke="#b8956a" stroke-width="0.3"/>
+    <circle cx="100" cy="5" r="3" fill="#b8956a" opacity="0.5"/>
+    <circle cx="195" cy="100" r="3" fill="#b8956a" opacity="0.5"/>
+    <circle cx="100" cy="195" r="3" fill="#b8956a" opacity="0.5"/>
+    <circle cx="5" cy="100" r="3" fill="#b8956a" opacity="0.5"/>
+  </svg>
+  <svg class="corner-decor br" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="100" r="95" stroke="#b8956a" stroke-width="0.5"/>
+    <circle cx="100" cy="100" r="80" stroke="#b8956a" stroke-width="0.5"/>
+    <circle cx="100" cy="100" r="65" stroke="#b8956a" stroke-width="0.3"/>
+    <path d="M100 5 L105 95 L100 100 L95 95 Z" fill="#b8956a" opacity="0.4"/>
+    <path d="M195 100 L105 105 L100 100 L105 95 Z" fill="#b8956a" opacity="0.4"/>
+    <path d="M100 195 L95 105 L100 100 L105 105 Z" fill="#b8956a" opacity="0.4"/>
+    <path d="M5 100 L95 95 L100 100 L95 105 Z" fill="#b8956a" opacity="0.4"/>
+    <path d="M30 30 L97 97 L100 100 L97 103 Z" fill="#b8956a" opacity="0.3"/>
+    <path d="M170 30 L103 97 L100 100 L103 103 Z" fill="#b8956a" opacity="0.3"/>
+    <path d="M170 170 L103 103 L100 100 L103 97 Z" fill="#b8956a" opacity="0.3"/>
+    <path d="M30 170 L97 103 L100 100 L97 97 Z" fill="#b8956a" opacity="0.3"/>
+    <circle cx="100" cy="100" r="50" stroke="#b8956a" stroke-width="0.3"/>
+    <circle cx="100" cy="5" r="3" fill="#b8956a" opacity="0.5"/>
+    <circle cx="195" cy="100" r="3" fill="#b8956a" opacity="0.5"/>
+    <circle cx="100" cy="195" r="3" fill="#b8956a" opacity="0.5"/>
+    <circle cx="5" cy="100" r="3" fill="#b8956a" opacity="0.5"/>
+  </svg>
 
-<div id="image-view">
-  <img src="invite.jpg" alt="Roka & Chunni Ceremony Invitation">
+  <div class="envelope-wrapper" id="envelope">
+    <div class="envelope-body"></div>
+
+    <!-- Top flap -->
+    <div class="flap-top">
+      <div class="invite-heading">
+        You are cordially invited to our
+        <span class="script-line">Roka &amp; Chunni</span>
+        Ceremony
+      </div>
+      <div class="divider"></div>
+    </div>
+
+    <!-- Bottom flap -->
+    <div class="flap-bottom">
+      <div class="logo-wrap">
+        <img src="ajlogo.png" alt="A & J">
+      </div>
+    </div>
+
+    <!-- Wax seal -->
+    <div class="seal" id="seal">
+      <div class="seal-circle">
+        <div class="drip drip-1"></div>
+        <div class="drip drip-2"></div>
+        <div class="drip drip-3"></div>
+        <div class="drip drip-4"></div>
+        <div class="drip drip-5"></div>
+        <span class="seal-text">Tap to<br>Open</span>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div id="video-view"></div>
+<!-- ── Video Screen ── -->
+<div id="video-screen">
+  <video id="video-backdrop" muted playsinline autoplay loop></video>
+  <div class="spinner" id="spinner"></div>
+</div>
 
 <button id="mute-btn" aria-label="Toggle sound">&#x1F507;</button>
 
 <script>
-  var imageView = document.getElementById('image-view');
-  var videoView = document.getElementById('video-view');
+  var envelope = document.getElementById('envelope');
+  var envelopeScreen = document.getElementById('envelope-screen');
+  var videoScreen = document.getElementById('video-screen');
   var muteBtn = document.getElementById('mute-btn');
+  var spinner = document.getElementById('spinner');
+  var seal = document.getElementById('seal');
+  var backdrop = document.getElementById('video-backdrop');
   var video = null;
-  var started = false;
+  var opened = false;
 
-  function startVideo(e) {
+  function openEnvelope(e) {
     if (e) e.preventDefault();
-    if (started) return;
-    started = true;
+    if (opened) return;
+    opened = true;
 
-    imageView.style.display = 'none';
-    videoView.style.display = 'flex';
-    muteBtn.style.display = 'flex';
+    envelope.classList.add('opened');
 
-    video = document.createElement('video');
-    video.src = 'invite.mp4';
-    video.playsInline = true;
-    video.setAttribute('playsinline', '');
-    video.setAttribute('webkit-playsinline', '');
-    video.preload = 'auto';
-    video.muted = false;
-    video.autoplay = true;
-    video.controls = false;
-    video.loop = false;
-    video.style.cssText = 'width:100%;height:100%;object-fit:contain;';
-    if (window.innerWidth > 768) {
-      video.style.borderRadius = '4px';
-      video.style.boxShadow = '0 8px 40px rgba(0,0,0,0.6)';
-    }
-    videoView.appendChild(video);
+    setTimeout(function () {
+      videoScreen.classList.add('active');
+      spinner.style.display = 'block';
 
-    video.playbackRate = 1.25;
+      video = document.createElement('video');
+      video.playsInline = true;
+      video.setAttribute('playsinline', '');
+      video.setAttribute('webkit-playsinline', '');
+      video.preload = 'auto';
+      video.muted = false;
+      video.autoplay = false;
+      video.controls = false;
+      video.loop = false;
+      video.style.cssText = 'width:100%;height:100%;object-fit:contain;';
 
-    // Try unmuted first (user gesture should allow it)
-    video.play().then(function () {
-      muteBtn.innerHTML = '&#x1F50A;';
-    }).catch(function () {
-      // Unmuted play blocked — fall back to muted
-      video.muted = true;
-      muteBtn.innerHTML = '&#x1F507;';
-      video.play();
-    });
+      var source = document.createElement('source');
+      source.src = 'Jasmeen & Arshdeep.mp4';
+      source.type = 'video/mp4';
+      video.appendChild(source);
+
+      video.addEventListener('canplay', function () {
+        spinner.style.display = 'none';
+      }, { once: true });
+
+      video.addEventListener('ended', function () {
+        video.currentTime = Math.max(0, video.duration - 0.1);
+        video.pause();
+      });
+
+      // Set up blurred backdrop
+      backdrop.src = 'Jasmeen & Arshdeep.mp4';
+      backdrop.load();
+
+      // Sync backdrop with main video
+      video.addEventListener('play', function () {
+        backdrop.currentTime = video.currentTime;
+        backdrop.play().catch(function(){});
+      });
+      video.addEventListener('pause', function () {
+        backdrop.pause();
+      });
+      video.addEventListener('seeked', function () {
+        backdrop.currentTime = video.currentTime;
+      });
+
+      videoScreen.appendChild(video);
+      video.load();
+
+      video.play().then(function () {
+        muteBtn.style.display = 'flex';
+        muteBtn.innerHTML = video.muted ? '&#x1F507;' : '&#x1F50A;';
+        envelopeScreen.classList.add('hidden');
+      }).catch(function () {
+        video.muted = true;
+        video.play().then(function () {
+          muteBtn.style.display = 'flex';
+          muteBtn.innerHTML = '&#x1F507;';
+          envelopeScreen.classList.add('hidden');
+        }).catch(function (err) {
+          console.log('play failed', err);
+        });
+      });
+    }, 950);
   }
 
-  imageView.addEventListener('pointerup', startVideo);
+  seal.addEventListener('click', openEnvelope);
+  seal.addEventListener('touchend', function (e) {
+    e.preventDefault();
+    openEnvelope(e);
+  });
 
   muteBtn.addEventListener('click', function (e) {
     e.stopPropagation();
     if (!video) return;
     video.muted = !video.muted;
     muteBtn.innerHTML = video.muted ? '&#x1F507;' : '&#x1F50A;';
-    // Resume playback if unmuting paused it
     if (video.paused) {
-      video.play();
+      video.play().catch(function () {});
     }
   });
 </script>
