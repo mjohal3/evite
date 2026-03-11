@@ -155,7 +155,7 @@
     video.setAttribute('playsinline', '');
     video.setAttribute('webkit-playsinline', '');
     video.preload = 'auto';
-    video.muted = true;
+    video.muted = false;
     video.autoplay = true;
     video.controls = false;
     video.loop = false;
@@ -166,10 +166,16 @@
     }
     videoView.appendChild(video);
 
+    video.playbackRate = 1.25;
+
+    // Try unmuted first (user gesture should allow it)
     video.play().then(function () {
+      muteBtn.innerHTML = '&#x1F50A;';
+    }).catch(function () {
+      // Unmuted play blocked — fall back to muted
+      video.muted = true;
       muteBtn.innerHTML = '&#x1F507;';
-    }).catch(function (err) {
-      console.log('play failed:', err);
+      video.play();
     });
   }
 
@@ -180,6 +186,10 @@
     if (!video) return;
     video.muted = !video.muted;
     muteBtn.innerHTML = video.muted ? '&#x1F507;' : '&#x1F50A;';
+    // Resume playback if unmuting paused it
+    if (video.paused) {
+      video.play();
+    }
   });
 </script>
 
