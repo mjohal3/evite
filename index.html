@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>A &amp; J — Roka &amp; Chunni Ceremony</title>
+
+<!-- Open Graph tags for rich link previews -->
+<meta property="og:title" content="A & J — Roka & Chunni Ceremony">
+<meta property="og:description" content="May 16, 2026 | 6:00 PM — The Marigold, Somerset, NJ">
+<meta property="og:image" content="https://mjohal3.github.io/evite/invite.jpg">
+<meta property="og:image:width" content="1024">
+<meta property="og:image:height" content="1536">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mjohal3.github.io/evite/">
+
+<!-- Twitter card fallback -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="A & J — Roka & Chunni Ceremony">
+<meta name="twitter:description" content="May 16, 2026 | 6:00 PM — The Marigold, Somerset, NJ">
+<meta name="twitter:image" content="https://mjohal3.github.io/evite/invite.jpg">
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+    font-family: sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Blurred backdrop — fills entire screen with the invite image */
+  #backdrop {
+    position: fixed;
+    top: -5%;
+    left: -5%;
+    width: 110%;
+    height: 110%;
+    background: url('invite.jpg') center/cover no-repeat;
+    filter: blur(30px) brightness(0.4);
+    z-index: 0;
+  }
+
+  #image-view {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  #image-view img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+  }
+
+  /* On mobile the image fills the screen — no shadow/radius needed */
+  @media (max-width: 768px) {
+    #image-view img {
+      border-radius: 0;
+      box-shadow: none;
+    }
+  }
+
+  #video-view {
+    display: none;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+  }
+
+  #video-view video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+  }
+
+  @media (max-width: 768px) {
+    #video-view video {
+      border-radius: 0;
+      box-shadow: none;
+    }
+  }
+
+  #mute-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 10;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  #mute-btn:active {
+    background: rgba(0, 0, 0, 0.7);
+  }
+</style>
+</head>
+<body>
+
+<div id="backdrop"></div>
+
+<div id="image-view">
+  <img src="invite.jpg" alt="Roka & Chunni Ceremony Invitation">
+</div>
+
+<div id="video-view">
+  <video
+    id="video"
+    src="invite.mp4"
+    playsinline
+    webkit-playsinline
+    preload="auto"
+    muted
+  ></video>
+</div>
+
+<button id="mute-btn" aria-label="Toggle sound">&#x1F507;</button>
+
+<script>
+  const imageView = document.getElementById('image-view');
+  const videoView = document.getElementById('video-view');
+  const video = document.getElementById('video');
+  const muteBtn = document.getElementById('mute-btn');
+
+  imageView.addEventListener('click', function () {
+    imageView.style.display = 'none';
+    videoView.style.display = 'flex';
+    muteBtn.style.display = 'flex';
+
+    video.play().then(function () {
+      video.muted = false;
+      muteBtn.innerHTML = '&#x1F50A;';
+    }).catch(function () {
+      video.muted = true;
+      muteBtn.innerHTML = '&#x1F507;';
+    });
+  });
+
+  muteBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    video.muted = !video.muted;
+    muteBtn.innerHTML = video.muted ? '&#x1F507;' : '&#x1F50A;';
+  });
+
+  video.addEventListener('ended', function () {
+    video.currentTime = 0;
+    video.play();
+  });
+</script>
+
+</body>
+</html>
