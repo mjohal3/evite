@@ -183,6 +183,10 @@
     font-weight: 400;
     white-space: nowrap;
   }
+  .invite-heading .script-line.names-line {
+    white-space: normal;
+    word-wrap: break-word;
+  }
   .invite-heading .ceremony-line {
     display: block;
     letter-spacing: 5px;
@@ -332,6 +336,23 @@
 
   /* ── Responsive fine-tuning ── */
 
+  @media (max-width: 480px) {
+    .flap-top {
+      padding: 2vh 12px 4vh;
+    }
+    .invite-heading {
+      font-size: clamp(12px, 2.8vw, 18px);
+      letter-spacing: 1.5px;
+      line-height: 1.8;
+    }
+    .invite-heading .script-line {
+      font-size: clamp(24px, 6vw, 40px);
+    }
+    .invite-heading .ceremony-line {
+      letter-spacing: 3px;
+    }
+  }
+
   @media (min-width: 769px) {
     .invite-heading { letter-spacing: 2px; }
   }
@@ -406,7 +427,7 @@
         <span class="script-line">Roka &amp; Chunni</span>
         <span class="ceremony-line">Ceremony</span>
         of
-        <span class="script-line">Arshdeep S Lidhar &amp; Jasmeen K Johal</span>
+        <span class="script-line names-line">Arshdeep S Lidhar &amp; Jasmeen K Johal</span>
       </div>
     </div>
 
