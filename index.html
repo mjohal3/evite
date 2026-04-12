@@ -300,6 +300,191 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
+  /* ── RSVP Screen ── */
+  #rsvp-screen {
+    position: fixed; inset: 0;
+    z-index: 200;
+    background: linear-gradient(160deg, #f5ede4 0%, #ede1d3 50%, #e8d9c8 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+    overflow-y: auto;
+  }
+  #rsvp-screen.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .rsvp-card {
+    width: 90%;
+    max-width: 440px;
+    padding: 36px 28px;
+    text-align: center;
+  }
+
+  .rsvp-card h2 {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(32px, 7vw, 52px);
+    font-weight: 400;
+    color: #7a5e3e;
+    margin-bottom: 6px;
+  }
+
+  .rsvp-card .rsvp-subtitle {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(13px, 2.5vw, 17px);
+    color: #6b5a48;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .rsvp-card .rsvp-divider {
+    width: 60px;
+    height: 1px;
+    background: #b8956a;
+    margin: 0 auto 28px;
+    opacity: 0.5;
+  }
+
+  .rsvp-event-info {
+    margin-bottom: 0;
+  }
+  .rsvp-event-info .rsvp-event-line {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(15px, 2.8vw, 19px);
+    font-weight: 600;
+    color: #2e2520;
+    letter-spacing: 1px;
+    line-height: 1.8;
+  }
+  .rsvp-event-info .rsvp-event-line.light {
+    font-weight: 400;
+    color: #6b5a48;
+    font-size: clamp(13px, 2.4vw, 16px);
+  }
+
+  .rsvp-field {
+    margin-bottom: 18px;
+    text-align: left;
+  }
+
+  .rsvp-field label {
+    display: block;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #5a4a3a;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .rsvp-field input,
+  .rsvp-field select {
+    width: 100%;
+    padding: 12px 14px;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 17px;
+    color: #2e2520;
+    background: rgba(255,255,255,0.7);
+    border: 1px solid rgba(184,149,106,0.35);
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .rsvp-field input:focus,
+  .rsvp-field select:focus {
+    border-color: #b8956a;
+  }
+
+  .rsvp-attending-options {
+    display: flex;
+    gap: 10px;
+  }
+
+  .rsvp-attending-options label {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 11px 0;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #5a4a3a;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: rgba(255,255,255,0.5);
+    border: 1px solid rgba(184,149,106,0.35);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .rsvp-attending-options input[type="radio"] {
+    display: none;
+  }
+
+  .rsvp-attending-options input[type="radio"]:checked + label {
+    background: #b8956a;
+    color: #fff;
+    border-color: #b8956a;
+  }
+
+  .rsvp-submit {
+    display: inline-block;
+    margin-top: 24px;
+    padding: 14px 48px;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #fff;
+    background: #7a5e3e;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .rsvp-submit:hover { background: #8b6d4a; }
+  .rsvp-submit:active { transform: scale(0.97); }
+  .rsvp-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .rsvp-success {
+    display: none;
+    text-align: center;
+  }
+  .rsvp-success h3 {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(28px, 6vw, 44px);
+    color: #7a5e3e;
+    font-weight: 400;
+    margin-bottom: 12px;
+  }
+  .rsvp-success p {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 18px;
+    color: #5a4a3a;
+    line-height: 1.6;
+  }
+
+  .rsvp-error {
+    display: none;
+    color: #a04040;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 15px;
+    margin-top: 12px;
+  }
+
   /* ── Responsive fine-tuning ── */
 
   @media (min-width: 769px) {
@@ -423,6 +608,62 @@
   <div class="spinner" id="spinner"></div>
 </div>
 
+<!-- ── RSVP Screen ── -->
+<div id="rsvp-screen">
+  <div class="rsvp-card">
+    <h2>RSVP</h2>
+    <div class="rsvp-subtitle">Roka &amp; Chunni Ceremony</div>
+    <div class="rsvp-divider"></div>
+
+    <div class="rsvp-event-info">
+      <div class="rsvp-event-line">Jasmeen Johal &amp; Arshdeep Lidhar</div>
+      <div class="rsvp-event-line">Saturday, May 16, 2026 &middot; 6:00 PM EDT</div>
+      <div class="rsvp-event-line">The Marigold</div>
+      <div class="rsvp-event-line light">315 Churchill Ave, Somerset, NJ 08873</div>
+    </div>
+
+    <div class="rsvp-divider" style="margin-top:28px"></div>
+
+    <form id="rsvp-form">
+      <div class="rsvp-field">
+        <label for="rsvp-name">Your Name</label>
+        <input type="text" id="rsvp-name" required autocomplete="name" placeholder="First & Last Name">
+      </div>
+
+      <div class="rsvp-field">
+        <div class="rsvp-attending-options">
+          <input type="radio" name="attending" id="att-yes" value="Yes" required>
+          <label for="att-yes">Joyfully Accept</label>
+          <input type="radio" name="attending" id="att-no" value="No">
+          <label for="att-no">Regretfully Decline</label>
+        </div>
+      </div>
+
+      <div class="rsvp-field" id="guests-field" style="display:none">
+        <label for="rsvp-guests">Number of Guests (including yourself)</label>
+        <select id="rsvp-guests">
+          <option value="1">1</option>
+          <option value="2" selected>2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+        </select>
+      </div>
+
+      <button type="submit" class="rsvp-submit" id="rsvp-submit-btn">Send RSVP</button>
+      <div class="rsvp-error" id="rsvp-error">Something went wrong. Please try again.</div>
+    </form>
+
+    <div class="rsvp-success" id="rsvp-success">
+      <h3>Thank You!</h3>
+      <p>We can't wait to celebrate with you.</p>
+    </div>
+  </div>
+</div>
+
 <button id="mute-btn" aria-label="Toggle sound">&#x1F507;</button>
 
 <script>
@@ -470,6 +711,7 @@
       video.addEventListener('ended', function () {
         video.currentTime = Math.max(0, video.duration - 0.1);
         video.pause();
+        showRSVP();
       });
 
       backdrop.src = 'Jasmeen & Arshdeep.mp4';
@@ -520,6 +762,65 @@
     if (video.paused) {
       video.play().catch(function () {});
     }
+  });
+
+  /* ── RSVP Logic ── */
+
+  // *** PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL ON THE LINE BELOW ***
+  var GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby9IPfZR6bZ52MaZ4V2bEOVSLHpBT1l4-OZzOMhcIgW-PDdck3RR2fgLuFIjihRu4Uv7g/exec';
+
+  var rsvpScreen = document.getElementById('rsvp-screen');
+  var rsvpForm = document.getElementById('rsvp-form');
+  var rsvpSuccess = document.getElementById('rsvp-success');
+  var rsvpError = document.getElementById('rsvp-error');
+  var guestsField = document.getElementById('guests-field');
+
+  function showRSVP() {
+    setTimeout(function () {
+      rsvpScreen.classList.add('active');
+      muteBtn.style.display = 'none';
+    }, 800);
+  }
+
+  // Show/hide guest count based on attending selection
+  document.querySelectorAll('input[name="attending"]').forEach(function (radio) {
+    radio.addEventListener('change', function () {
+      guestsField.style.display = this.value === 'Yes' ? 'block' : 'none';
+    });
+  });
+
+  rsvpForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    rsvpError.style.display = 'none';
+
+    var name = document.getElementById('rsvp-name').value.trim();
+    var attendingEl = document.querySelector('input[name="attending"]:checked');
+    if (!name || !attendingEl) return;
+
+    var attending = attendingEl.value;
+    var guests = attending === 'Yes' ? document.getElementById('rsvp-guests').value : '0';
+
+    var submitBtn = document.getElementById('rsvp-submit-btn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+
+    fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: name,
+        attending: attending,
+        guests: guests
+      })
+    }).then(function () {
+      rsvpForm.style.display = 'none';
+      rsvpSuccess.style.display = 'block';
+    }).catch(function () {
+      rsvpError.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send RSVP';
+    });
   });
 </script>
 
